@@ -20,7 +20,7 @@ app.get("/", function(req, res) {
 app.get("/api", readJSON, saveLogs, function(req, res) {
 
 
-    console.log("api visited by: " + req.headers['x-forwarded-for']);
+    //console.log("api visited by: " + req.headers['x-forwarded-for']);
     res.send(res.locals.obj);
     resetJSON();
 
@@ -48,11 +48,11 @@ function saveLogs(req, res, next) {
                 
             }
             
-            console.log(obj.length);
+            //console.log(obj.length);
             jsonfile.writeFile(logsPath, obj, function(err) {
                 if (err) { console.error(err) }
                 else {
-                    console.log(logString);
+                    //console.log(logString);
                     next();
                 }
             })
@@ -75,7 +75,7 @@ function resetJSON() {
     jsonfile.writeFile(dataPath, dataZero, function(err) {
         if (err) { console.error(err) }
         else {
-            console.log("reset");
+            //console.log("reset");
         }
 
     })
@@ -119,7 +119,7 @@ function writeJSON(req, res) {
         if (err) { console.error(err) }
         else {
 
-            console.log(res.locals.obj);
+            //console.log(res.locals.obj);
             res.send(JSON.stringify(res.locals.obj));
         }
     })
