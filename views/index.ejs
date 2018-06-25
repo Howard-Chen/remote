@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Controller</title>
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+</head>
+<body>
+    
+<div class="jumbotron ">
+    <div class = "d-block my-1 py-1">
+    
+  <h1>Controller</h1> 
+</div>
+<div class = "my-5">
+<!--<button id="btn-on" type="button" class="btn btn-success">On</button>-->
+
+<!--<button id="btn-off" type="button" class="btn btn-secondary">Off</button>-->
+
+<!--<button id="btn-warm" type="button" class="btn btn-warning">Up</button>-->
+
+<!--<button id="btn-cold" ="button" class="btn btn-info">Down</button>-->
+
+<div id="btn-on"  class="d-inline p-5 bg-success btn">On</div>
+
+<div id="btn-off"  class="d-inline p-5 bg-secondary btn">Off</div>
+
+<div id="btn-warm"  class="d-inline p-5 bg-warning btn">Up</div>
+
+<div id="btn-cold"  class="d-inline p-5 bg-info btn">Down</div>
+
+<div class = "d-block my-3 py-5">
+<h4 >Set: <span id = "set-text" ></span></h4>
+    </div>
+   </div> 
+</div>    
+
+
+    
+    <div class="container">
+      <h4 class="my-2">Logs:</h4>
+      
+  <table id = "table-logs" class="table table-striped">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Send</th>
+        <th>IP Address</th>
+      </tr>
+    </thead>
+  
+  </table>
+</div>
+    
+<script>
+
+
+
+    document.getElementById("btn-on").addEventListener("click", function(){
+      var payload = {power: 1};
+      sendReq(payload);
+  });
+  
+      document.getElementById("btn-off").addEventListener("click", function(){
+      var payload = {power: -1};
+      sendReq(payload);
+  });
+  
+        document.getElementById("btn-warm").addEventListener("click", function(){
+      var payload = {temperature: 1};
+      sendReq(payload);
+  });
+  
+          document.getElementById("btn-cold").addEventListener("click", function(){
+      var payload = {temperature: -1};
+      sendReq(payload);
+  });
+  
+  getLogs();
+createTable()
+  setInterval(function(){ 
+  getLogs();
+ }, 3000);
+
+
+function sendReq(data){
+   var url = '/set';
+   fetch(url, {
+  method: 'POST', // or 'PUT'
+  body: JSON.stringify(data), // data can be `string` or {object}!
+  
+  headers:{
+    'Content-Type': 'application/json'
+  }
+}).then(res => res.json())
+.catch(error => console.error('Error:', error))
+.then(response => displaySet(response));
+};
+
+function displaySet(response){
+ var t = JSON.stringify(response)
+  document.getElementById("set-text").textContent = t;
+  console.log('Success:', response);
+}
+
+
+ 
+ function getLogs(){
+   
+     var url = '/logs';
+   fetch(url).then(res => res.json())
+.catch(error => console.error('Error:', error))
+.then(response => displayLogs(response));
+   
+ }
+ 
+ function createTable(){
+      var tbody = document.createElement('tbody'), tr, td, row, cell;
+for (row = 0; row < 10; row++) {
+    tr = document.createElement('tr');
+     tr.classList.add("log-data");
+    for (cell = 0; cell < 3; cell++) {
+        td = document.createElement('td');
+        
+        tr.appendChild(td);
+        td.innerHTML = row * 3 + cell + 1;
+    }
+    tbody.appendChild(tr);
+}
+document.getElementById('table-logs').appendChild(tbody);
+ }
+ 
+ function displayLogs(response){
+     
+     response.forEach(function(element,ind){
+         document.querySelectorAll(".log-data")[ind].children[0].textContent = element.time;
+          document.querySelectorAll(".log-data")[ind].children[1].textContent = JSON.stringify(element.send);
+           document.querySelectorAll(".log-data")[ind].children[2].textContent = element.ip;
+         
+     })
+     
+    
+//  var t = JSON.stringify(response)
+//   document.getElementById("logs-text").textContent = t;
+  //console.log('Success:', response);
+}
+
+
+
+</script> 
+
+</body>
+</html>
